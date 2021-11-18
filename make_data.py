@@ -4,7 +4,7 @@ import shutil
 import pickle
 import pandas as pd
 from collections import Counter
-from utils import get_tagtog_df, get_label_to_num, get_num_to_label, get_eng_name
+from utils import get_tagtog_df, label_to_num, get_eng_name
 from sklearn.model_selection import train_test_split
 
 file_path = './file'
@@ -26,7 +26,7 @@ def make_iaa_data(args):
     raw_df = pd.read_excel(os.path.join(file_path, 'iaa_tourist_spot_raw.xlsx'), engine='openpyxl')
     iaa_df = raw_df.copy()    
     
-    dict_label_to_num = get_label_to_num()
+    dict_label_to_num = label_to_num()
     
     for column in iaa_df.columns:
         iaa_df[column] = iaa_df[column].apply(lambda x: get_eng_name(x))
