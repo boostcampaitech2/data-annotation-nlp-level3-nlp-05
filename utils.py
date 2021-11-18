@@ -163,7 +163,12 @@ def get_tagtog_df():
 
     df = pd.DataFrame(data)
     df = df.sort_values('title')
-    df["id"] = [i for i in range(len(df))]
+    df = df.loc[df['subject_entity'].apply(lambda x: type(x)) == dict, :]
+    df = df.loc[df['object_entity'].apply(lambda x: type(x)) == dict, :]
+    df = df.loc[df['confirm'] == True, :]
+    df = df.reset_index(drop=True)        
+    df["id"] = [idx+1 for idx in df.index]
+    df = df.drop(columns=['confirm'])
     
     return df
 
