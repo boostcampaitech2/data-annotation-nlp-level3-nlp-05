@@ -56,11 +56,13 @@ def get_labels(df):
 def post_process_df(df, flag):
     df = df.reset_index(drop=True)
     df['id'] = df.index
+    ground_truth_df = df.copy()
     if flag == 'test':
+        ground_truth_df = ground_truth_df[['id', 'label']]
         df['label'] = [100 for _ in range(len(df))]    
     df = df[['id', 'sentence', 'subject_entity', 'object_entity', 'label', 'source']]
 
-    return df
+    return df, ground_truth_df
 
 def make_train_data(args):
     tagtog_df = get_tagtog_df()
@@ -90,7 +92,10 @@ def make_train_data(args):
 
     data_dict = {'train': train_df, 'eval': eval_df, 'test': test_df}
     for key in data_dict.keys():
-        data_dict[key] = post_process_df(data_dict[key], key)
+        if key in ['train', 'eval']:
+            data_dict[key], _ = post_process_df(data_dict[key], key)
+        else:
+            data_dict[key], ground_truth_df = post_process_df(data_dict[key], key)
 
     save_train_path = os.path.join(save_path, 'train')
     save_test_path = os.path.join(save_path, 'test')
@@ -106,6 +111,7 @@ def make_train_data(args):
             data_dict[key].to_csv(os.path.join(save_train_path, f"{key}.csv"), index=False, encoding="utf-8")
         else:
             data_dict[key].to_csv(os.path.join(save_test_path, f"test_data.csv"), index=False, encoding="utf-8")
+            ground_truth_df.to_csv(os.path.join(save_test_path, f"test_data_ground_truth.csv"), index=False, encoding="utf-8")
 
 def get_args():
     parser = argparse.ArgumentParser(description="make data arguments")
