@@ -197,16 +197,6 @@ def get_tagtog_df():
     
     return df
 
-def get_label_to_num():
-    with open('./file/dict_label_to_num.pkl', 'rb') as f:
-        dict_label_to_num = pickle.load(f)
-    return dict_label_to_num
-
-def get_num_to_label():
-    with open('./file/dict_num_to_label.pkl', 'rb') as f:
-        dict_num_to_label = pickle.load(f)
-    return dict_num_to_label
-
 def get_eng_name(data):
     result = re.findall(r"\([a-z]+:[a-z_]+\)|\([a-z_]+\)", data)[0]
     result = result.replace('(','').replace(')','')
