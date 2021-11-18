@@ -1,3 +1,4 @@
+import re
 import os
 import requests
 import zipfile
@@ -205,3 +206,8 @@ def get_num_to_label():
     with open('./file/dict_num_to_label.pkl', 'rb') as f:
         dict_num_to_label = pickle.load(f)
     return dict_num_to_label
+
+def get_eng_name(data):
+    result = re.findall(r"\([a-z]+:[a-z_]+\)|\([a-z_]+\)", data)[0]
+    result = result.replace('(','').replace(')','')
+    return result
