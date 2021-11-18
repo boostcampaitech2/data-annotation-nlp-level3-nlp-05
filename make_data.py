@@ -3,6 +3,7 @@ import argparse
 import shutil
 import pickle
 import pandas as pd
+from collections import Counter
 from utils import get_tagtog_df, get_label_to_num, get_num_to_label, get_eng_name
 from sklearn.model_selection import train_test_split
 
@@ -37,6 +38,21 @@ def make_annot_data(args):
     annot_df = get_tagtog_df()
     annot_df.to_excel(os.path.join(file_path, 'relation_annotation.xlsx'), index=False, encoding='utf-8')
 
+def get_labels(df):
+    labels = []
+    for i, row in df.iterrows():
+        label = None
+        if row['correct'] == True:
+            label = get_eng_name(row['relation_1'])
+        else:
+            counter = Counter([row[f"relation_{j}"] for j in range(1,4)])
+            if max(counter.values()) != 2:
+                label = 'none'
+            else:
+                label = get_eng_name([k for k, v in counter.items() if v == 2][0])
+        labels.append(label)
+    return labels
+
 def post_process_df(df, flag):
     df = df.reset_index(drop=True)
     df['id'] = df.index
@@ -54,9 +70,9 @@ def make_train_data(args):
     merge_df['exclude'] = merge_df['exclude'].fillna('유지')
 
     df = merge_df.copy() # 1683
-    df = df.loc[df['correct'] == True, :] # 1323
-    df = df.loc[df['exclude'] == '유지', :] # 1272
-    df['label'] = df['relation_1'].apply(lambda x: get_eng_name(x))
+    df['label'] = get_labels(df)
+    df = df.loc[df['exclude'] == '유지', :] # 1600
+    df = df.loc[df['label'] != 'none', :] # 1594
     df['source'] = ['wikipedia' for _ in range(len(df))]
     df = df.drop(
         columns=[
@@ -67,8 +83,8 @@ def make_train_data(args):
         ]
     )
 
-    train_df, test_df = train_test_split(df, test_size=args.test_split_ratio, random_state=args.seed)
-    train_df, eval_df = train_test_split(train_df, test_size=args.eval_split_ratio, random_state=args.seed)
+    train_df, test_df = train_test_split(df, test_size=args.test_split_ratio, random_state=args.seed, stratify=df['label'].tolist())
+    train_df, eval_df = train_test_split(train_df, test_size=args.eval_split_ratio, random_state=args.seed, stratify=train_df['label'].tolist())
 
     print(f"train: {len(train_df)}, eval: {len(eval_df)}, test: {len(test_df)}")
 
