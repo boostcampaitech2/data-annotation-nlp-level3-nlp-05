@@ -24,10 +24,10 @@ def klue_re_micro_f1(preds, labels):
 
 def klue_re_auprc(probs, labels):
   """KLUE-RE AUPRC (with no_relation)"""
-  labels = np.eye(30)[labels]
+  labels = np.eye(10)[labels]
 
-  score = np.zeros((30,))
-  for c in range(30):
+  score = np.zeros((10,))
+  for c in range(10):
       targets_c = labels.take([c], axis=1).ravel()
       preds_c = probs.take([c], axis=1).ravel()
       precision, recall, _ = sklearn.metrics.precision_recall_curve(targets_c, preds_c)
@@ -57,9 +57,8 @@ def train():
   tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
   # load dataset
-  TRAIN_DATASET_PATH = "dataset/train/train.csv"
-  EVAL_DATASET_PATH  = None 
-  # EVAL_DATASET_PATH  = "dataset/train/eval.csv"
+  TRAIN_DATASET_PATH = "/opt/ml/data/dataset/train/train.csv"
+  EVAL_DATASET_PATH  = "/opt/ml/data/dataset/train/eval.csv"
 
   train_dataset = load_data(TRAIN_DATASET_PATH)
   eval_dataset  = load_data(EVAL_DATASET_PATH) if EVAL_DATASET_PATH is not None else train_dataset
@@ -116,7 +115,7 @@ def train():
   model.save_pretrained('./best_model')
 
   ## load test datset
-  test_dataset_dir = "dataset/test/test_data.csv"
+  test_dataset_dir = "/opt/ml/data/dataset/test/test_data.csv"
   test_id, test_dataset, test_label = load_test_dataset(test_dataset_dir, tokenizer)
   Re_test_dataset = RE_Dataset(test_dataset ,test_label)
 
