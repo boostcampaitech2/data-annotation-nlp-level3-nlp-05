@@ -10,6 +10,8 @@ import numpy as np
 import argparse
 from tqdm import tqdm
 
+from utils import num_to_label
+
 def inference(model, tokenized_sent, device):
   """
     test dataset을 DataLoader로 만들어 준 후,
@@ -36,18 +38,6 @@ def inference(model, tokenized_sent, device):
   
   return np.concatenate(output_pred).tolist(), np.concatenate(output_prob, axis=0).tolist()
 
-def num_to_label(label):
-  """
-    숫자로 되어 있던 class를 원본 문자열 라벨로 변환 합니다.
-  """
-  origin_label = []
-  with open('dict_num_to_label.pkl', 'rb') as f:
-    dict_num_to_label = pickle.load(f)
-  for v in label:
-    origin_label.append(dict_num_to_label[v])
-  
-  return origin_label
-
 def load_test_dataset(dataset_dir, tokenizer):
   """
     test dataset을 불러온 후,
@@ -58,6 +48,15 @@ def load_test_dataset(dataset_dir, tokenizer):
   # tokenizing dataset
   tokenized_test = tokenized_dataset(test_dataset, tokenizer)
   return test_dataset['id'], tokenized_test, test_label
+
+def create_csv(test_id, pred_answer, output_prob):
+  ## make csv file with predicted answer
+  #########################################################
+  # 아래 directory와 columns의 형태는 지켜주시기 바랍니다.
+  output = pd.DataFrame({'id':test_id,'pred_label':pred_answer,'probs':output_prob,})
+
+  output.to_csv('./prediction/submission.csv', index=False) # 최종적으로 완성된 예측한 라벨 csv 파일 형태로 저장.
+  #### 필수!! ##############################################
 
 def main(args):
   """
@@ -83,14 +82,9 @@ def main(args):
   pred_answer, output_prob = inference(model, Re_test_dataset, device) # model에서 class 추론
   pred_answer = num_to_label(pred_answer) # 숫자로 된 class를 원래 문자열 라벨로 변환.
   
-  ## make csv file with predicted answer
-  #########################################################
-  # 아래 directory와 columns의 형태는 지켜주시기 바랍니다.
-  output = pd.DataFrame({'id':test_id,'pred_label':pred_answer,'probs':output_prob,})
-
-  output.to_csv('./prediction/submission.csv', index=False) # 최종적으로 완성된 예측한 라벨 csv 파일 형태로 저장.
-  #### 필수!! ##############################################
+  create_csv(test_id, pred_answer, output_prob)
   print('---- Finish! ----')
+
 if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   

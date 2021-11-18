@@ -28,7 +28,12 @@ def preprocessing_dataset(dataset):
 
     subject_entity.append(i)
     object_entity.append(j)
-  out_dataset = pd.DataFrame({'id':dataset['id'], 'sentence':dataset['sentence'],'subject_entity':subject_entity,'object_entity':object_entity,'label':dataset['label'],})
+  out_dataset = pd.DataFrame({'id':dataset['id'], 
+                              'sentence':dataset['sentence'],
+                              'subject_entity':subject_entity,
+                              'object_entity':object_entity,
+                              'label':dataset['label'],
+                            })
   return out_dataset
 
 def load_data(dataset_dir):

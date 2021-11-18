@@ -2,11 +2,17 @@ tagtog_result/
 
 # python
 __pycache__/
+*.pyc
 
 # logs, saved models
 best_model/
 saved/
 logs/
+
+# data
+dataset/
+prediction/
+results/
 
 # Linux/MacOS specifics
 ._*
