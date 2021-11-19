@@ -8,6 +8,7 @@ __pycache__/
 best_model/
 saved/
 logs/
+wandb/
 
 # data
 dataset/
