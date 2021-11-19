@@ -2,10 +2,10 @@
 0,no_relation,관계없음
 1,loc:founded,장소:건축일
 2,loc:address,장소:소재지
-3,loc:heritage_info,장소:문화재정보
-4,loc:alternative_name,장소:대체명
-5,loc:sites_contained,장소:하위장소
-6,per:found,인물:건축물
-7,per:place_of_residence,인물:거주지
-8,per:family,인물:가족관계
-9,org:member,단체:소속인물
+3,loc:alternative_name,장소:대체명
+4,loc:sites_contained,장소:하위장소
+5,loc:heritage_info,장소:문화재정보
+6,org:member,단체:소속인물
+7,per:found,인물:건축물
+8,per:place_of_residence,인물:거주지
+9,per:family,인물:가족관계
