@@ -16,3 +16,4 @@ results/
 
 # Linux/MacOS specifics
 ._*
+__pycache__/utils.cpython-38.pyc

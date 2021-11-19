@@ -26,11 +26,10 @@ def make_iaa_data(args):
     raw_df = pd.read_excel(os.path.join(file_path, 'iaa_tourist_spot_raw.xlsx'), engine='openpyxl')
     iaa_df = raw_df.copy()    
     
-    dict_label_to_num = label_to_num()
     
     for column in iaa_df.columns:
         iaa_df[column] = iaa_df[column].apply(lambda x: get_eng_name(x))
-        iaa_df[column] = iaa_df[column].apply(lambda x: dict_label_to_num[x])
+        iaa_df[column] = label_to_num(iaa_df[column])
         
     iaa_df.to_excel(os.path.join(file_path, 'iaa_tourist_spot.xlsx'), index=False, encoding='utf-8')
 
